@@ -1,41 +1,31 @@
 import { atom, selector } from 'recoil';
 import { setAuthToken } from '../api/client';
 
-const localStorageKey = 'athenaeum_auth';
+const KEY = 'auth_v1';
 
-function persistEffect(key) {
-  return ({ setSelf, onSet }) => {
-    const saved = localStorage.getItem(key);
-    if (saved) {
-      try {
-        const parsed = JSON.parse(saved);
-        setSelf(parsed);
-        if (parsed?.token) setAuthToken(parsed.token);
-      } catch (_) {}
-    }
-    onSet((newValue) => {
-      try {
-        if (newValue) {
-          localStorage.setItem(key, JSON.stringify(newValue));
-          if (newValue?.token) setAuthToken(newValue.token);
-          else setAuthToken(null);
-        } else {
-          localStorage.removeItem(key);
-          setAuthToken(null);
-        }
-      } catch (_) {}
-    });
-  };
-}
+const persist = ({ setSelf, onSet }) => {
+  const saved = localStorage.getItem(KEY);
+  if (saved) {
+    try {
+      const parsed = JSON.parse(saved);
+      setSelf(parsed);
+      if (parsed?.token) setAuthToken(parsed.token);
+    } catch (_) {}
+  }
+  onSet((v) => {
+    if (v) localStorage.setItem(KEY, JSON.stringify(v)); else localStorage.removeItem(KEY);
+    setAuthToken(v?.token || null);
+  });
+};
 
 export const authState = atom({
   key: 'authState',
-  default: null, // { token, user: { id, email, name } }
-  effects: [persistEffect(localStorageKey)],
+  default: null,
+  effects: [persist],
 });
 
-export const isAuthenticatedSelector = selector({
-  key: 'isAuthenticatedSelector',
+export const isAuthedSelector = selector({
+  key: 'isAuthedSelector',
   get: ({ get }) => Boolean(get(authState)?.token),
 });
 

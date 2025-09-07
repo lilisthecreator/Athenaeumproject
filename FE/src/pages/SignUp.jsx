@@ -2,35 +2,35 @@ import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import { authState } from '../state/auth';
-import { loginUser } from '../api/client';
 
-export default function LoginPage() {
+export default function SignUp() {
   const setAuth = useSetRecoilState(authState);
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [confirm, setConfirm] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   async function handleSubmit(e) {
     e.preventDefault();
+    if (password !== confirm) {
+      setError('Password tidak sama');
+      return;
+    }
     setLoading(true);
     setError('');
-    try {
-      const data = await loginUser({ email, password });
-      setAuth(data);
-      navigate('/');
-    } catch (e) {
-      setError(e?.response?.data?.message || e.message || 'Login gagal');
-    } finally {
-      setLoading(false);
-    }
+    // Mock signup: immediately log user in
+    setTimeout(() => {
+      setAuth({ token: 'mock-token', user: { id: 'mock-user', email, name: email.split('@')[0] || 'User' } });
+      navigate('/dashboard');
+    }, 400);
   }
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center">
       <div className="w-full max-w-sm">
-        <h1 className="text-2xl font-semibold mb-6">Masuk</h1>
+        <h1 className="text-2xl font-semibold mb-6">Daftar</h1>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm mb-1">Email</label>
@@ -40,11 +40,15 @@ export default function LoginPage() {
             <label className="block text-sm mb-1">Password</label>
             <input type="password" value={password} onChange={(e)=>setPassword(e.target.value)} required className="w-full border rounded-md px-3 py-2" placeholder="••••••••" />
           </div>
+          <div>
+            <label className="block text-sm mb-1">Konfirmasi Password</label>
+            <input type="password" value={confirm} onChange={(e)=>setConfirm(e.target.value)} required className="w-full border rounded-md px-3 py-2" placeholder="••••••••" />
+          </div>
           {error && <div className="text-sm text-red-600">{error}</div>}
-          <button type="submit" disabled={loading} className="w-full bg-blue-600 text-white rounded-md py-2 disabled:opacity-50">{loading ? 'Memproses...' : 'Masuk'}</button>
+          <button type="submit" disabled={loading} className="w-full bg-blue-600 text-white rounded-md py-2 disabled:opacity-50">{loading ? 'Memproses...' : 'Daftar'}</button>
         </form>
         <div className="mt-4 text-sm">
-          Belum punya akun? <Link to="/register" className="text-blue-600">Daftar</Link>
+          Sudah punya akun? <Link to="/login" className="text-blue-600">Masuk</Link>
         </div>
       </div>
     </div>

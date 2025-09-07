@@ -1,42 +1,28 @@
-import { Link, Route, Routes } from 'react-router-dom';
-import ScanPage from './pages/ScanPage';
-import BookDetailsPage from './pages/BookDetailsPage';
-import BorrowPage from './pages/BorrowPage';
-import LoginPage from './pages/LoginPage';
-import RegisterPage from './pages/RegisterPage';
-import DashboardPage from './pages/DashboardPage';
+import { Route, Routes, Navigate } from 'react-router-dom';
+import Login from './pages/Login';
+import SignUp from './pages/SignUp';
+import Dashboard from './pages/Dashboard';
+import Books from './pages/Books';
+import Profile from './pages/Profile';
+import Borrow from './pages/Borrow';
 import ProtectedRoute from './components/ProtectedRoute';
-import { useRecoilState } from 'recoil';
-import { authState } from './state/auth';
+import BottomNav from './components/BottomNav';
 
 function App() {
-  const [auth, setAuth] = useRecoilState(authState);
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900">
-      <nav className="sticky top-0 z-10 bg-white border-b border-gray-200">
-        <div className="max-w-5xl mx-auto px-4 py-3 flex items-center justify-between">
-          <Link to="/dashboard" className="font-semibold">Athenaeum</Link>
-          <div className="flex items-center gap-3 text-sm">
-            <Link className="hover:underline" to="/">Scan</Link>
-            <Link className="hover:underline" to="/dashboard">Dashboard</Link>
-            {auth?.user ? (
-              <button className="text-red-600" onClick={() => setAuth(null)}>Logout</button>
-            ) : (
-              <Link className="hover:underline" to="/login">Login</Link>
-            )}
-          </div>
-        </div>
-      </nav>
-      <main className="max-w-5xl mx-auto px-4 py-6">
+      <main className="max-w-5xl mx-auto px-4 py-6 pb-24">
         <Routes>
-          <Route path="/" element={<ScanPage />} />
-          <Route path="/book/:isbn" element={<BookDetailsPage />} />
-          <Route path="/borrow/:isbn" element={<ProtectedRoute><BorrowPage /></ProtectedRoute>} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/register" element={<RegisterPage />} />
-          <Route path="/dashboard" element={<ProtectedRoute><DashboardPage /></ProtectedRoute>} />
+          <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/books" element={<ProtectedRoute><Books /></ProtectedRoute>} />
+          <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+          <Route path="/borrow" element={<ProtectedRoute><Borrow /></ProtectedRoute>} />
         </Routes>
       </main>
+      <BottomNav />
     </div>
   );
 }
