@@ -62,4 +62,13 @@ export async function borrowBook(isbn) {
   }
 }
 
+export async function getBorrows(email) {
+  try {
+    const { data } = await api.get('/borrows', { params: { email } });
+    return data;
+  } catch (_) {
+    return [];
+  }
+}
+
 

@@ -12,8 +12,7 @@ export default function Borrow() {
   }, [navigate]);
 
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-semibold">Scan untuk Pinjam</h1>
+    <div className="space-y-6 pt-4">
       {error && <div className="text-red-600 text-sm">{error}</div>}
       <Scanner onDetected={onDetected} onError={(e)=>setError(e.message)} />
       <p className="text-sm text-gray-600">Arahkan kamera ke barcode ISBN.</p>
