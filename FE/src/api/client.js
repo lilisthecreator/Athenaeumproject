@@ -53,9 +53,9 @@ export async function getBookByIsbn(isbn) {
   }
 }
 
-export async function borrowBook(isbn) {
+export async function borrowBook(isbn, email) {
   try {
-    const { data } = await api.post(`/borrow/${encodeURIComponent(isbn)}`);
+    const { data } = await api.post(`/borrow/${encodeURIComponent(isbn)}`, { email });
     return data;
   } catch (_) {
     return { ok: true };

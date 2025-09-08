@@ -1,12 +1,12 @@
 const fastify = require('fastify')({ logger: true });
 const routes = require('./routes');
 
-fastify.register(require('fastify-cors'), {
+fastify.register(require('@fastify/cors'), {
   origin: true,
   credentials: true,
 });
 
-fastify.register(require('fastify-jwt'), { secret: 'dev-secret' });
+fastify.register(require('@fastify/jwt'), { secret: 'dev-secret' });
 
 fastify.register(routes);
 

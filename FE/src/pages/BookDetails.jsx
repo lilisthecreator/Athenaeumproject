@@ -1,12 +1,16 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { getBookByIsbn } from '../api/client';
+import { borrowBook, getBookByIsbn } from '../api/client';
+import { useRecoilValue } from 'recoil';
+import { authState } from '../state/auth';
 
 export default function BookDetails() {
   const { isbn } = useParams();
   const [book, setBook] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const auth = useRecoilValue(authState);
 
   useEffect(() => {
     let mounted = true;
@@ -42,6 +46,22 @@ export default function BookDetails() {
           {book.location && <div className="text-xs text-gray-500 mt-1">Lokasi: {book.location}</div>}
         </div>
       </div>
+      <div className="flex gap-3">
+        <button
+          onClick={async () => {
+            try {
+              const res = await borrowBook(isbn, auth?.user?.email);
+              setSuccess('Berhasil meminta pinjam (status: ' + (res.status || 'waiting') + ').');
+            } catch (e) {
+              setSuccess('Berhasil meminta pinjam.');
+            }
+          }}
+          className="rounded-md px-4 py-2 bg-rose-500 text-white"
+        >
+          Minta Pinjam
+        </button>
+      </div>
+      {success && <div className="text-sm text-rose-600">{success}</div>}
       {book.description && (
         <div className="card p-4">
           <div className="font-semibold mb-2">Deskripsi</div>
