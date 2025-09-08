@@ -1,18 +1,12 @@
 import { Search } from 'lucide-react';
-import { useState } from 'react';
 
 export default function Header({ name = 'Friend', onSearch }) {
-  const initial = encodeURI(process.env.PUBLIC_URL + '/logo/AthenaeumProject (Presentation).png');
-  const [logoSrc, setLogoSrc] = useState(initial);
   return (
     <div className="space-y-4">
-      <div className="flex items-center justify-start px-4">
-        <img
-          src={logoSrc}
-          alt="Athenaeum Logo"
-          className="h-24 sm:h-28 md:h-32 max-w-[85%] w-auto object-contain"
-          onError={() => setLogoSrc(encodeURI(process.env.PUBLIC_URL + '/logo/logo.png'))}
-        />
+      <div className="flex justify-center px-4">
+        <div className="inline-flex items-center justify-center rounded-full bg-beige px-6 py-3 shadow-soft border border-white/60">
+          <span className="font-serif text-xl tracking-wide">AthenaeumProject.</span>
+        </div>
       </div>
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">

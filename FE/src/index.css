@@ -4,7 +4,7 @@
 
 @layer base {
   :root {
-    --bg: #F7F3EE; /* cream */
+    --bg: #f6f1eb; /* requested page background */
     --text: #3E3A34; /* ink */
   }
   html, body, #root {

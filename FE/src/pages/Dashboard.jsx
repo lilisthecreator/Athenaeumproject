@@ -1,11 +1,16 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { getRecentBooks } from '../api/client';
+import { getRecentBooks, getBorrows } from '../api/client';
 import Header from '../components/Header';
+import { useRecoilValue } from 'recoil';
+import { authState } from '../state/auth';
 
 export default function Dashboard() {
   const [recent, setRecent] = useState([]);
+  const auth = useRecoilValue(authState);
+  const [borrowCount, setBorrowCount] = useState(0);
   useEffect(() => { (async () => setRecent(await getRecentBooks()))(); }, []);
+  useEffect(() => { (async () => setBorrowCount((await getBorrows(auth?.user?.email || '')).length || 0))(); }, [auth?.user?.email]);
   return (
     <div className="space-y-8 pt-2">
       <Header />
@@ -34,6 +39,18 @@ export default function Dashboard() {
             <div className="card p-3"><div className="aspect-[3/4] w-full rounded-xl bg-sand-100 mb-3" /><div className="h-4 bg-sand-200 rounded w-2/3" /></div>
           </>
         )}
+      </div>
+      {/* Books count illustration inside page spanning two-card width */}
+      <div className="relative">
+        <img
+          src={encodeURI(process.env.PUBLIC_URL + '/logo/books count.png')}
+          alt="Books illustration"
+          className="w-full rounded-xl select-none"
+        />
+        <div className="absolute top-1/2 -translate-y-1/2 right-4 bg-white/90 backdrop-blur rounded-xl px-4 py-2 text-xs border border-white/60 shadow-soft text-[var(--text)]">
+          <div className="font-semibold text-sm">Book count</div>
+          <div className="text-xs">{borrowCount} borrowed</div>
+        </div>
       </div>
       <Link to="/borrow" className="fixed right-4 bottom-24 w-14 h-14 rounded-full bg-rose-500 text-white shadow-soft flex items-center justify-center">Scan</Link>
     </div>

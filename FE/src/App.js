@@ -11,7 +11,7 @@ import BottomNav from './components/BottomNav';
 
 function App() {
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900 safe-top">
+    <div className="min-h-screen bg-[var(--bg)] text-gray-900 safe-top">
       <main className="max-w-5xl mx-auto px-4 py-6 pb-24">
         <Routes>
           <Route path="/" element={<Navigate to="/login" replace />} />
