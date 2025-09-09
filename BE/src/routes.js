@@ -101,17 +101,20 @@ async function routes(fastify) {
         enriched.genre = enriched.genre || (Array.isArray(info3.categories) ? info3.categories[0] : undefined);
       } catch (_) {}
     }
-    // Fallback: try OpenLibrary if Google Books didn't return data
-    if (!enriched.title) {
+    // Fallbacks: try OpenLibrary if Google Books didn't return data, or to fill missing fields
+    if (!enriched.title || !enriched.description || !enriched.cover) {
       try {
         const { fetch } = await import('undici');
         const res = await fetch(`https://openlibrary.org/isbn/${isbn}.json`);
         if (res.ok) {
           const data = await res.json();
-          enriched.title = data.title || enriched.title;
-          if (!enriched.description) {
-            const desc = typeof data.description === 'string' ? data.description : data.description?.value;
-            enriched.description = desc;
+          enriched.title = enriched.title || data.title;
+          const desc = typeof data.description === 'string' ? data.description : data.description?.value;
+          enriched.description = enriched.description || desc || '';
+          // Prefer direct ISBN cover endpoint first
+          if (!enriched.cover) {
+            const byIsbn = `https://covers.openlibrary.org/b/isbn/${isbn}-M.jpg?default=false`;
+            enriched.cover = byIsbn;
           }
           if (!enriched.cover && Array.isArray(data.covers) && data.covers.length) {
             enriched.cover = `https://covers.openlibrary.org/b/id/${data.covers[0]}-M.jpg`;
